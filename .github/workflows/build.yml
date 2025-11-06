@@ -12,8 +12,8 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [18, 20]
-      fail-fast: false  # 不要因为一个版本失败就取消其他版本
+        node-version: [20]  # 使用 Node.js 20，更好的兼容性
+      fail-fast: false
     
     steps:
     - name: Checkout code
@@ -38,15 +38,14 @@ jobs:
       run: npm run compile
       
     - name: Install vsce
-      run: npm install -g @vscode/vsce
+      run: npm install -g @vscode/vsce@2.22.0
       
     - name: Package extension
-      run: vsce package --allow-missing-repository
+      run: vsce package --no-dependencies
         
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
-      if: matrix.node-version == 18  # 只在 Node.js 18 时上传
       with:
-        name: extension-build-${{ github.sha }}
+        name: extension-build-${{ github.run_number }}
         path: '*.vsix'
         retention-days: 7

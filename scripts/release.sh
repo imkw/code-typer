@@ -34,10 +34,6 @@ echo "🔍 检查项目状态..."
 # 安装依赖
 npm ci
 
-# 运行测试
-echo "🧪 运行测试..."
-npm test || echo "⚠️  测试有问题，但继续发布流程"
-
 # 编译项目
 echo "🔨 编译项目..."
 npm run compile
@@ -61,23 +57,19 @@ All notable changes to this project will be documented in this file.
 ## [$NEW_VERSION] - $(date +%Y-%m-%d)
 
 ### Added
-- Initial release of Code Typer extension
-- Support for typing simulation with multiple speeds
-- Template system for predefined code snippets
-- Status bar controls for play/pause/stop
-- Multi-line code support with proper line breaks
+- Version bump to $NEW_VERSION
 
 EOF
 else
     # 在现有 CHANGELOG.md 中添加新版本
-    sed -i.bak "3i\\
+    sed -i.bak "5i\\
 \\
 ## [$NEW_VERSION] - $(date +%Y-%m-%d)\\
 \\
 ### Changed\\
 - Version bump to $NEW_VERSION\\
 " CHANGELOG.md
-    rm CHANGELOG.md.bak
+    rm CHANGELOG.md.bak 2>/dev/null || true
 fi
 
 # 提交更改
@@ -99,3 +91,6 @@ echo "推送标签后，GitHub Actions 将自动:"
 echo "- 编译扩展"
 echo "- 创建 GitHub Release"
 echo "- 上传 .vsix 文件"
+echo ""
+echo "执行推送命令："
+echo "git push && git push --tags"
