@@ -2,7 +2,7 @@
   "name": "code-typer",
   "displayName": "Code Typer",
   "description": "模拟人类快速输入代码片段的效果",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "karlwang",
   "author": {
     "name": "Karl Wang",
