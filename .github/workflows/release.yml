@@ -41,13 +41,11 @@ jobs:
         echo "filename=$PACKAGE_NAME-$PACKAGE_VERSION.vsix" >> $GITHUB_OUTPUT
         
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }}
-        release_name: Release ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         body: |
           ## 🚀 Code Typer ${{ steps.package.outputs.version }}
           
@@ -71,18 +69,9 @@ jobs:
           
           ### 更新日志
           查看完整的更新日志请访问 [CHANGELOG.md](https://github.com/imkw/code-typer/blob/main/CHANGELOG.md)
+        files: ./${{ steps.package.outputs.filename }}
         draft: false
         prerelease: false
-        
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./${{ steps.package.outputs.filename }}
-        asset_name: ${{ steps.package.outputs.filename }}
-        asset_content_type: application/zip
         
     - name: Upload artifact
       uses: actions/upload-artifact@v4
