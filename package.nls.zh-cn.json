@@ -1,0 +1,12 @@
+{
+  "displayName": "代码输入器",
+  "description": "模拟人类打字输入代码片段，支持自定义速度、模板和自动滚动",
+  "command.typeCode": "输入代码",
+  "command.typeCodeSlowly": "慢速输入代码",
+  "command.typeCodeFast": "快速输入代码",
+  "command.typeFromTemplate": "从模板输入",
+  "command.selectTemplate": "选择模板",
+  "command.play": "播放",
+  "command.pause": "暂停",
+  "command.stop": "停止"
+}

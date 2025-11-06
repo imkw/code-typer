@@ -1,0 +1,12 @@
+{
+  "displayName": "Code Typer",
+  "description": "Simulate human typing for code snippets with customizable speed, templates, and auto-scroll",
+  "command.typeCode": "Type Code",
+  "command.typeCodeSlowly": "Type Code Slowly",
+  "command.typeCodeFast": "Type Code Fast",
+  "command.typeFromTemplate": "Type from Template",
+  "command.selectTemplate": "Select Template",
+  "command.play": "Play",
+  "command.pause": "Pause",
+  "command.stop": "Stop"
+}

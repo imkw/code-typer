@@ -1,9 +1,9 @@
 {
   "name": "code-typer",
-  "displayName": "Code Typer",
-  "description": "模拟人类快速输入代码片段的效果",
-  "version": "1.0.4",
-  "publisher": "karlwang",
+  "displayName": "%displayName%",
+  "description": "%description%",
+  "version": "1.1.0",
+  "publisher": "imkw",
   "author": {
     "name": "Karl Wang",
     "email": "code@imkw.cn"
@@ -37,47 +37,42 @@
     "commands": [
       {
         "command": "code-typer.typeCode",
-        "title": "Type Code",
+        "title": "%command.typeCode%",
         "category": "Code Typer"
       },
       {
         "command": "code-typer.typeCodeSlowly",
-        "title": "Type Code Slowly",
+        "title": "%command.typeCodeSlowly%",
         "category": "Code Typer"
       },
       {
         "command": "code-typer.typeCodeFast",
-        "title": "Type Code Fast",
+        "title": "%command.typeCodeFast%",
         "category": "Code Typer"
       },
       {
         "command": "code-typer.typeFromTemplate",
-        "title": "Type From Template",
+        "title": "%command.typeFromTemplate%",
         "category": "Code Typer"
       },
       {
         "command": "code-typer.selectTemplate",
-        "title": "Select Template",
-        "category": "Code Typer"
-      },
-      {
-        "command": "code-typer.toggleEffects",
-        "title": "Toggle Effects",
+        "title": "%command.selectTemplate%",
         "category": "Code Typer"
       },
       {
         "command": "code-typer.play",
-        "title": "Play",
+        "title": "%command.play%",
         "category": "Code Typer"
       },
       {
         "command": "code-typer.pause",
-        "title": "Pause",
+        "title": "%command.pause%",
         "category": "Code Typer"
       },
       {
         "command": "code-typer.stop",
-        "title": "Stop",
+        "title": "%command.stop%",
         "category": "Code Typer"
       }
     ],
@@ -112,7 +107,13 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "test": "node --max_old_space_size=4096 ./node_modules/.bin/vscode-test || echo 'Tests completed'",
-    "test:ci": "npm run pretest && npm run test"
+    "test:ci": "npm run pretest && npm run test",
+    "pre-release-check": "./scripts/pre-release-check.sh",
+    "release": "./scripts/release.sh",
+    "release:patch": "./scripts/release.sh patch",
+    "release:minor": "./scripts/release.sh minor",
+    "release:major": "./scripts/release.sh major",
+    "quick-release": "./scripts/quick-release.sh"
   },
   "devDependencies": {
     "@types/vscode": "^1.105.0",

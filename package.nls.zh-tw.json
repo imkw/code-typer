@@ -1,0 +1,12 @@
+{
+  "displayName": "程式碼輸入器",
+  "description": "模擬人類打字輸入程式碼片段，支援自訂速度、範本和自動捲動",
+  "command.typeCode": "輸入程式碼",
+  "command.typeCodeSlowly": "慢速輸入程式碼",
+  "command.typeCodeFast": "快速輸入程式碼",
+  "command.typeFromTemplate": "從範本輸入",
+  "command.selectTemplate": "選擇範本",
+  "command.play": "播放",
+  "command.pause": "暫停",
+  "command.stop": "停止"
+}

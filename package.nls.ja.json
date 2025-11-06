@@ -1,0 +1,12 @@
+{
+  "displayName": "コードタイパー",
+  "description": "人間のタイピングを模擬してコードスニペットを入力、カスタマイズ可能な速度、テンプレート、自動スクロール機能付き",
+  "command.typeCode": "コードを入力",
+  "command.typeCodeSlowly": "ゆっくりコードを入力",
+  "command.typeCodeFast": "高速でコードを入力",
+  "command.typeFromTemplate": "テンプレートから入力",
+  "command.selectTemplate": "テンプレートを選択",
+  "command.play": "再生",
+  "command.pause": "一時停止",
+  "command.stop": "停止"
+}
