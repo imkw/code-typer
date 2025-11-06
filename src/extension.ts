@@ -41,6 +41,7 @@ class CodeTyperState {
 	public currentContent: string = '';
 	public currentSpeed: TypingSpeed = TYPING_SPEEDS.normal;
 	public cancellationTokenSource: vscode.CancellationTokenSource | undefined;
+	public effectsEnabled: boolean = false; // 特效开关
 	
 	public reset() {
 		this.isTyping = false;
@@ -71,11 +72,115 @@ class CodeTyperState {
 
 const state = new CodeTyperState();
 
+// 粒子特效和窗口抖动
+interface ParticleEffect {
+	id: string;
+	x: number;
+	y: number;
+	vx: number;
+	vy: number;
+	life: number;
+	maxLife: number;
+	color: string;
+}
+
+let activeParticles: ParticleEffect[] = [];
+let particleAnimationId: NodeJS.Timeout | undefined;
+
+// 创建粒子特效
+function createParticleEffect(editor: vscode.TextEditor) {
+	if (!state.effectsEnabled) {
+		return;
+	}
+	
+	// 获取当前光标位置
+	const position = editor.selection.active;
+	const visibleRange = editor.visibleRanges[0];
+	
+	// 计算相对位置（简化版，实际位置可能需要更复杂的计算）
+	const lineOffset = position.line - visibleRange.start.line;
+	const charOffset = position.character;
+	
+	// 创建多个粒子
+	const particleCount = 3 + Math.floor(Math.random() * 3); // 3-5个粒子
+	const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+	
+	for (let i = 0; i < particleCount; i++) {
+		const particle: ParticleEffect = {
+			id: Math.random().toString(36).substr(2, 9),
+			x: charOffset * 8 + Math.random() * 20 - 10, // 假设字符宽度8px
+			y: lineOffset * 20 + Math.random() * 20 - 10, // 假设行高20px
+			vx: (Math.random() - 0.5) * 4, // 水平速度
+			vy: (Math.random() - 0.5) * 4 - 2, // 垂直速度（稍微向上）
+			life: 30, // 30毫秒生命周期
+			maxLife: 30,
+			color: colors[Math.floor(Math.random() * colors.length)]
+		};
+		activeParticles.push(particle);
+	}
+	
+	// 如果还没有动画循环，启动它
+	if (!particleAnimationId) {
+		startParticleAnimation();
+	}
+}
+
+// 粒子动画循环
+function startParticleAnimation() {
+	particleAnimationId = setInterval(() => {
+		// 更新所有粒子
+		activeParticles = activeParticles.filter(particle => {
+			particle.life--;
+			particle.x += particle.vx;
+			particle.y += particle.vy;
+			particle.vy += 0.1; // 重力效果
+			
+			return particle.life > 0;
+		});
+		
+		// 如果没有活跃粒子，停止动画
+		if (activeParticles.length === 0 && particleAnimationId) {
+			clearInterval(particleAnimationId);
+			particleAnimationId = undefined;
+		}
+	}, 16); // 约60fps
+}
+
+// 窗口抖动效果
+async function createShakeEffect() {
+	if (!state.effectsEnabled) {
+		return;
+	}
+	
+	// 使用 VS Code 的状态栏闪烁来模拟视觉反馈
+	// 因为我们无法直接控制 VS Code 窗口抖动
+	try {
+		// 创建一个临时的状态栏项目来显示特效
+		const tempEffectItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
+		tempEffectItem.text = '✨';
+		tempEffectItem.show();
+		
+		// 快速闪烁效果
+		const flashSequence = ['✨', '💥', '⚡', '🎆', '✨'];
+		for (let i = 0; i < flashSequence.length; i++) {
+			tempEffectItem.text = flashSequence[i];
+			await new Promise(resolve => setTimeout(resolve, 6)); // 6ms间隔，总共30ms
+		}
+		
+		// 清理临时项目
+		tempEffectItem.hide();
+		tempEffectItem.dispose();
+	} catch (error) {
+		// 忽略错误
+	}
+}
+
 // 状态栏元素
 let templateStatusBarItem: vscode.StatusBarItem;
 let playStatusBarItem: vscode.StatusBarItem;
 let pauseStatusBarItem: vscode.StatusBarItem;
 let stopStatusBarItem: vscode.StatusBarItem;
+let effectsStatusBarItem: vscode.StatusBarItem;
 
 // 模拟打字的核心函数
 async function typeText(editor: vscode.TextEditor, text: string, speed: TypingSpeed, token?: vscode.CancellationToken): Promise<void> {
@@ -105,6 +210,14 @@ async function typeText(editor: vscode.TextEditor, text: string, speed: TypingSp
 			const position = new vscode.Position(currentLine, currentCharacter);
 			editBuilder.insert(position, char);
 		});
+		
+		// 触发特效（如果启用）
+		if (state.effectsEnabled) {
+			// 创建粒子特效
+			createParticleEffect(editor);
+			// 创建窗口抖动效果
+			createShakeEffect();
+		}
 		
 		// 更新光标位置
 		if (char === '\n') {
@@ -303,6 +416,10 @@ function updateStatusBar() {
 	templateStatusBarItem.text = state.currentTemplate ? `$(file-code) ${state.currentTemplate}` : '$(file-code) 选择模板';
 	templateStatusBarItem.show();
 	
+	// 更新特效开关按钮
+	effectsStatusBarItem.text = state.effectsEnabled ? '$(sparkle) 特效开' : '$(circle-outline) 特效关';
+	effectsStatusBarItem.show();
+	
 	// 更新控制按钮
 	if (state.isTyping) {
 		playStatusBarItem.hide();
@@ -373,6 +490,10 @@ export function activate(context: vscode.ExtensionContext) {
 	templateStatusBarItem.command = 'code-typer.selectTemplate';
 	templateStatusBarItem.tooltip = '选择模板文件';
 	
+	effectsStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 101);
+	effectsStatusBarItem.command = 'code-typer.toggleEffects';
+	effectsStatusBarItem.tooltip = '切换输入特效';
+	
 	playStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 99);
 	playStatusBarItem.command = 'code-typer.play';
 	playStatusBarItem.text = '$(play) 播放';
@@ -389,6 +510,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// 初始状态栏显示
 	updateStatusBar();
+
+	// 切换特效命令
+	const toggleEffectsCommand = vscode.commands.registerCommand('code-typer.toggleEffects', () => {
+		state.effectsEnabled = !state.effectsEnabled;
+		updateStatusBar();
+		const status = state.effectsEnabled ? '开启' : '关闭';
+		vscode.window.showInformationMessage(`输入特效已${status}`);
+	});
 
 	// 选择模板命令
 	const selectTemplateCommand = vscode.commands.registerCommand('code-typer.selectTemplate', async () => {
@@ -595,10 +724,12 @@ export function activate(context: vscode.ExtensionContext) {
 		typeCodeFastCommand,
 		typeFromTemplateCommand,
 		selectTemplateCommand,
+		toggleEffectsCommand,
 		playCommand,
 		pauseCommand,
 		stopCommand,
 		templateStatusBarItem,
+		effectsStatusBarItem,
 		playStatusBarItem,
 		pauseStatusBarItem,
 		stopStatusBarItem

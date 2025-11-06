@@ -61,6 +61,11 @@
         "category": "Code Typer"
       },
       {
+        "command": "code-typer.toggleEffects",
+        "title": "Toggle Effects",
+        "category": "Code Typer"
+      },
+      {
         "command": "code-typer.play",
         "title": "Play",
         "category": "Code Typer"
