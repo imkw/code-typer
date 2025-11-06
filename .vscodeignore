@@ -5,6 +5,7 @@ node_modules/**
 src/**
 scripts/**
 .github/**
+test-fixtures/**
 .gitignore
 .yarnrc
 esbuild.js

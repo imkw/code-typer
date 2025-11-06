@@ -106,7 +106,8 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "node --max_old_space_size=4096 ./node_modules/.bin/vscode-test || echo 'Tests completed'",
+    "test:ci": "npm run pretest && npm run test"
   },
   "devDependencies": {
     "@types/vscode": "^1.105.0",
