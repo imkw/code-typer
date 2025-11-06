@@ -2,7 +2,7 @@
   "name": "code-typer",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "4.0.0",
+  "version": "1.1.0",
   "publisher": "imkw",
   "author": {
     "name": "Karl Wang",
@@ -109,7 +109,7 @@
     "test": "node --max_old_space_size=4096 ./node_modules/.bin/vscode-test || echo 'Tests completed'",
     "test:ci": "npm run pretest && npm run test",
     "pre-release-check": "./scripts/pre-release-check.sh",
-    "release": "./scripts/release.sh",
+    "release": "./scripts/release.sh patch",
     "release:patch": "./scripts/release.sh patch",
     "release:minor": "./scripts/release.sh minor",
     "release:major": "./scripts/release.sh major",
