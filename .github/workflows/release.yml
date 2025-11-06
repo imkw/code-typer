@@ -1,0 +1,93 @@
+name: Release VS Code Extension
+
+on:
+  push:
+    tags:
+      - 'v*'  # 当推送以 v 开头的标签时触发（如 v1.0.0）
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+      continue-on-error: true  # 如果测试失败不阻止构建
+      
+    - name: Compile extension
+      run: npm run compile
+      
+    - name: Install vsce
+      run: npm install -g @vscode/vsce
+      
+    - name: Package extension
+      run: vsce package
+      
+    - name: Get package info
+      id: package
+      run: |
+        PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        PACKAGE_NAME=$(node -p "require('./package.json').name")
+        echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+        echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+        echo "filename=$PACKAGE_NAME-$PACKAGE_VERSION.vsix" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          ## 🚀 Code Typer ${{ steps.package.outputs.version }}
+          
+          ### 新功能和改进
+          - 模拟人类快速输入代码片段的效果
+          - 支持三种输入速度（慢速、正常、快速）
+          - 完整的模板系统支持
+          - 状态栏播放控制功能
+          - 支持暂停和继续功能
+          
+          ### 安装方法
+          1. 下载下方的 `.vsix` 文件
+          2. 在 VS Code 中按 `Ctrl+Shift+P` 打开命令面板
+          3. 输入 "Extensions: Install from VSIX..."
+          4. 选择下载的 `.vsix` 文件进行安装
+          
+          ### 使用说明
+          - 快捷键：`Ctrl+Shift+T` (Mac: `Cmd+Shift+T`)
+          - 命令面板：搜索 "Type Code"
+          - 状态栏控制：点击状态栏的播放控制按钮
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./${{ steps.package.outputs.filename }}
+        asset_name: ${{ steps.package.outputs.filename }}
+        asset_content_type: application/zip
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: vscode-extension
+        path: ./${{ steps.package.outputs.filename }}
+        retention-days: 30

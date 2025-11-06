@@ -1,0 +1,124 @@
+{
+  "name": "code-typer",
+  "displayName": "Code Typer",
+  "description": "模拟人类快速输入代码片段的效果",
+  "version": "1.0.0",
+  "publisher": "karlwang",
+  "author": {
+    "name": "Karl Wang",
+    "email": "code@imkw.cn"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imkw/code-typer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/imkw/code-typer/issues"
+  },
+  "homepage": "https://github.com/imkw/code-typer#readme",
+  "license": "MIT",
+  "keywords": [
+    "typing",
+    "simulation",
+    "code",
+    "demo",
+    "presentation",
+    "template"
+  ],
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "code-typer.typeCode",
+        "title": "Type Code",
+        "category": "Code Typer"
+      },
+      {
+        "command": "code-typer.typeCodeSlowly",
+        "title": "Type Code Slowly",
+        "category": "Code Typer"
+      },
+      {
+        "command": "code-typer.typeCodeFast",
+        "title": "Type Code Fast",
+        "category": "Code Typer"
+      },
+      {
+        "command": "code-typer.typeFromTemplate",
+        "title": "Type From Template",
+        "category": "Code Typer"
+      },
+      {
+        "command": "code-typer.selectTemplate",
+        "title": "Select Template",
+        "category": "Code Typer"
+      },
+      {
+        "command": "code-typer.play",
+        "title": "Play",
+        "category": "Code Typer"
+      },
+      {
+        "command": "code-typer.pause",
+        "title": "Pause",
+        "category": "Code Typer"
+      },
+      {
+        "command": "code-typer.stop",
+        "title": "Stop",
+        "category": "Code Typer"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "code-typer.typeCode",
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "code-typer.typeCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.105.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "eslint": "^9.36.0",
+    "esbuild": "^0.25.10",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
